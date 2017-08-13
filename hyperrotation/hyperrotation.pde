@@ -193,7 +193,7 @@ void gradientLine(float x1, float y1, float x2, float y2, color a, color b, floa
   size1 = abs(size1/600.0)*10.0+5.0;
   if(size1 < 5.0) size1=5.0;
   if(size1 > 15.0) size1=15.0;
-  size2 = abs(size2/600.0)*15.0;
+  size2 = abs(size2/600.0)*10.0+5.0;
   if(size2 < 5.0) size2 = 5.0;
   if(size2 > 15.0) size2 = 15.0;
   float deltaX = x2-x1;
