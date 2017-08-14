@@ -1,1 +1,4 @@
 *.autosave
+*.png
+*.mpg
+*/tmp/*

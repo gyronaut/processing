@@ -259,5 +259,9 @@ void draw(){
     }
     //increment fade variable;
     fade += 0.01;
+    if(frameCount<=628){
+      saveFrame("./tmp/hyperv2-0_####.png");
+    }else if(frameCount>628){
+      noLoop();
+    }
 }
-
