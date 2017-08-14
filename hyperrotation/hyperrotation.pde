@@ -209,7 +209,7 @@ void gradientLine(float x1, float y1, float x2, float y2, color a, color b, floa
 
 void draw(){
   //fade out previous drawing
-  float alphaVal = 30+20*cos(fade);
+  float alphaVal = 50+48*cos(fade);
   fill(0.0, 0.0, 0.0, alphaVal);
   rect(0.0, 0.0, 600.0, 600.0);
   //project onto 2D and update colors
@@ -255,4 +255,9 @@ void draw(){
   }
   //increment fade variable;
   fade += 0.01;
+  if(frameCount <= 628){
+    saveFrame("./tmp/hyperv1-2_####.png");
+  }else if(frameCount > 628){
+    noLoop();
+  }
 }
