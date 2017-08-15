@@ -20,14 +20,21 @@ boolean isCube = true;
 float fade = 0.0;
 
 void setup(){
-    background(0.0);
-    size(600, 600);
-    colorMode(HSB, 360, 100, 100);
+    //background(0.0);
+    size(600, 600, P3D);
+    colorMode(HSB, 360, 100, 100, 100);
     noStroke();
+    //noLoop();
+    translate(0,0,0);
+    pushMatrix();
+    translate(0,0,300);
+    fill(0.0, 0.0, 0.0, 100);
+    rect(0,0,600,600);
+    popMatrix();
 
     //setup Colors
     for(int i = 0; i< 16; i++){
-        vtxColors[i] = color(170 + 5*i, 100 - (3.75*i), 100-(i*3.75));
+        vtxColors[i] = color(170 + 5*i, 100 - (3.75*i), 99);
     }
 
     //set-up rotation matrices:
@@ -81,21 +88,21 @@ void setup(){
     //set-up 4D vertices
     for(int i = 0; i<16; i++){
         if(isCube){
-            hyper[i][0] = w*((float(1+((2*i)%4))/4.0));
+            hyper[i][0] = w*((0.3 + 0.4*(i%2)));
             if(i%4 < 2){
-                hyper[i][1] = (0.25)*w;
+                hyper[i][1] = (0.3)*w;
             }else{
-                hyper[i][1] = (0.75)*w;
+                hyper[i][1] = (0.7)*w;
             }
             if(i%8 < 4){
-                hyper[i][2] = (0.25)*w;
+                hyper[i][2] = (0.3)*w;
             }else{
-                hyper[i][2] = (0.75)*w;
+                hyper[i][2] = (0.7)*w;
             }
             if(i < 8){
-                hyper[i][3] = (0.25)*w;
+                hyper[i][3] = (0.3)*w;
             }else{
-                hyper[i][3] = (0.75)*w;
+                hyper[i][3] = (0.7)*w;
             }
         }else{
             hyper[i][0] = w*(random(0.0, RANDMAX)+ (float(1+((2*i)%4))/4.0));
@@ -118,12 +125,12 @@ void setup(){
         }
     }
 
-    //rotate vertices by the 3 rotation matrices X,Y,Z  
+    //rotate vertices by the 4 rotation matrices X,Y,Z,W  
     for(int point = 0; point < 16; point++){
-        rotate(hyper[point], rotationX);
-        rotate(hyper[point], rotationY);
-        rotate(hyper[point], rotationZ);
-        rotate(hyper[point], rotationW);
+        rotate3D(hyper[point], rotationX);
+        rotate3D(hyper[point], rotationY);
+        rotate3D(hyper[point], rotationZ);
+        //rotate(hyper[point], rotationW);
     }
 
     //set-up the 4D "infintessimal" rotation
@@ -155,18 +162,25 @@ void projectAndUpdate(){
     for(int i = 0; i<16; i++){
         projection[i][0] = hyper[i][1];
         projection[i][1] = hyper[i][2];
-        float dist = sqrt(hyper[i][0]*hyper[i][0] + hyper[i][3]*hyper[i][3]);
-        float alphaBright = map(dist, 150.0, 600.0*sqrt(2.0)-150.0, 0.0, 100.0);
+        //float dist = sqrt(hyper[i][0]*hyper[i][0] + hyper[i][3]*hyper[i][3]);
+        float dist = hyper[i][3];
+        float alphaBright = map(dist, 0, 600, 0.0, 100.0);
         if(alphaBright<1.0) alphaBright = 1.0;
         if(alphaBright>99.0) alphaBright = 99.0;
-        float hue = map(dist, 150.0, 600.0*sqrt(2.0)-150.0, 0, 250);
-        if(hue < 0.0) hue = 0.0;
-        if(hue > 250) hue = 250.0;
-        vtxColors[i] = color(hue, 75, 50+(0.5*alphaBright), 20+(0.8*alphaBright));
+        float hue = map(dist, 50, 550, 125, 300);
+        if(hue < 125.0){
+          println(hue);
+          hue = 125.0;
+        }
+        if(hue > 300){
+          hue = 300.0;
+          println(hue);
+        }
+        vtxColors[i] = color(hue, 80, 65, 99);
     }
 }
 
-void rotate(float[] vec, float[][] mat){
+void rotate3D(float[] vec, float[][] mat){
     float[] newvec  = {0.0, 0.0, 0.0, 0.0};
     for(int i = 0; i < 4; i++){
         for(int j = 0; j < 4; j++){
@@ -192,76 +206,86 @@ float[][] matrixMult(float[][] mat1, float[][] mat2){
     return newMat;            
 }
 
-void gradientLine(float x1, float y1, float x2, float y2, color a, color b, float size1, float size2) {
-    size1 = abs(size1/600.0)*15.0+5.0;
-    if(size1 < 5.0) size1=5.0;
-    if(size1 > 20.0) size1=20.0;
-    size2 = abs(size2/600.0)*15.0+5.0;
-    if(size2 < 5.0) size2 = 5.0;
-    if(size2 > 20.0) size2 = 20.0;
+void gradientLine(float x1, float y1, float z1, float x2, float y2, float z2, color a, color b) {
     float deltaX = x2-x1;
     float deltaY = y2-y1;
-    float tStep = 1.0/dist(x1, y1, x2, y2);
+    float deltaZ = z2-z1;
+    float d = dist(x1,y1,z1,x2,y2,z2);
+    float tStep = 1.0;
+    if(d > 0){
+      tStep = 1.0/d;
+    }
     for (float t = 0.0; t < 1.0; t += tStep) {
         fill(lerpColor(a, b, t));
-        float size = map(t, 0.0, 1.0, size1, size2);
-        ellipse(x1+t*deltaX,  y1+t*deltaY, size, size);
+        //float size = map(t, 0.0, 1.0, size1, size2);
+        pushMatrix();
+        translate(x1+t*deltaX, y1+t*deltaY, z1+t*deltaZ-300);
+        ellipse(0, 0, 10, 10);
+        popMatrix();
     }
 }
 
 
 void draw(){
-    //fade out previous drawing
-    //float alphaVal = 30+20*cos(fade);
-    float alphaVal = 50.0;
-    fill(0.0, 0.0, 0.0, alphaVal);
-    rect(0.0, 0.0, 600.0, 600.0);
+  
     //project onto 2D and update colors
     projectAndUpdate();
+    
+    //fade out previous drawing
+    //float alphaVal = 30+20*cos(fade);
+    float alphaVal = 7.0;
+    fill(0.0, 0.0, 0.0, alphaVal);
+    pushMatrix();
+    translate(0,0,460);
+    hint(DISABLE_DEPTH_TEST);
+    rect(0.0, 0.0, 600.0, 600.0);
+    hint(ENABLE_DEPTH_TEST);
+    popMatrix();
 
     //draw gradient lines between vertices of projected hypersurface
-    gradientLine(projection[0][0], projection[0][1], projection[1][0], projection[1][1], vtxColors[0], vtxColors[1], hyper[0][3], hyper[1][3]);
-    gradientLine(projection[0][0], projection[0][1], projection[2][0], projection[2][1], vtxColors[0], vtxColors[2], hyper[0][3], hyper[2][3]);
-    gradientLine(projection[0][0], projection[0][1], projection[4][0], projection[4][1], vtxColors[0], vtxColors[4], hyper[0][3], hyper[4][3]);
-    gradientLine(projection[0][0], projection[0][1], projection[8][0], projection[8][1], vtxColors[0], vtxColors[8], hyper[0][3], hyper[8][3]);
-    gradientLine(projection[1][0], projection[1][1], projection[9][0], projection[9][1], vtxColors[1], vtxColors[9], hyper[1][3], hyper[9][3]);
-    gradientLine(projection[2][0], projection[2][1], projection[10][0], projection[10][1], vtxColors[2], vtxColors[10], hyper[2][3], hyper[10][3]);
-    gradientLine(projection[3][0], projection[3][1], projection[1][0], projection[1][1], vtxColors[3], vtxColors[1], hyper[3][3], hyper[1][3]);
-    gradientLine(projection[3][0], projection[3][1], projection[2][0], projection[2][1], vtxColors[3], vtxColors[2], hyper[3][3], hyper[2][3]);
-    gradientLine(projection[3][0], projection[3][1], projection[7][0], projection[7][1], vtxColors[3], vtxColors[7], hyper[3][3], hyper[7][3]);
-    gradientLine(projection[3][0], projection[3][1], projection[11][0], projection[11][1], vtxColors[3], vtxColors[11], hyper[3][3], hyper[11][3]);
-    gradientLine(projection[4][0], projection[4][1], projection[12][0], projection[12][1], vtxColors[4], vtxColors[12], hyper[4][3], hyper[12][3]);
-    gradientLine(projection[6][0], projection[6][1], projection[4][0], projection[4][1], vtxColors[6], vtxColors[4], hyper[6][3], hyper[4][3]);
-    gradientLine(projection[6][0], projection[6][1], projection[2][0], projection[2][1], vtxColors[6], vtxColors[2], hyper[6][3], hyper[2][3]);
-    gradientLine(projection[6][0], projection[6][1], projection[7][0], projection[7][1], vtxColors[6], vtxColors[7], hyper[6][3], hyper[7][3]);
-    gradientLine(projection[6][0], projection[6][1], projection[14][0], projection[14][1], vtxColors[6], vtxColors[14], hyper[6][3], hyper[14][3]);
-    gradientLine(projection[5][0], projection[5][1], projection[4][0], projection[4][1], vtxColors[5], vtxColors[4], hyper[5][3], hyper[4][3]);
-    gradientLine(projection[5][0], projection[5][1], projection[1][0], projection[1][1], vtxColors[5], vtxColors[1], hyper[5][3], hyper[1][3]);
-    gradientLine(projection[5][0], projection[5][1], projection[7][0], projection[7][1], vtxColors[5], vtxColors[7], hyper[5][3], hyper[7][3]);
-    gradientLine(projection[5][0], projection[5][1], projection[13][0], projection[13][1], vtxColors[5], vtxColors[13], hyper[5][3], hyper[13][3]);
-    gradientLine(projection[7][0], projection[7][1], projection[15][0], projection[15][1], vtxColors[7], vtxColors[15], hyper[7][3], hyper[15][3]);
-    gradientLine(projection[8][0], projection[8][1], projection[9][0], projection[9][1], vtxColors[8], vtxColors[9], hyper[8][3], hyper[9][3]);
-    gradientLine(projection[8][0], projection[8][1], projection[10][0], projection[10][1], vtxColors[8], vtxColors[10], hyper[8][3], hyper[10][3]);
-    gradientLine(projection[8][0], projection[8][1], projection[12][0], projection[12][1], vtxColors[8], vtxColors[12], hyper[8][3], hyper[12][3]);
-    gradientLine(projection[11][0], projection[11][1], projection[9][0], projection[9][1], vtxColors[11], vtxColors[9], hyper[11][3], hyper[9][3]);
-    gradientLine(projection[11][0], projection[11][1], projection[10][0], projection[10][1], vtxColors[11], vtxColors[10], hyper[11][3], hyper[10][3]);
-    gradientLine(projection[11][0], projection[11][1], projection[15][0], projection[15][1], vtxColors[11], vtxColors[15], hyper[11][3], hyper[15][3]);
-    gradientLine(projection[14][0], projection[14][1], projection[12][0], projection[12][1], vtxColors[14], vtxColors[12], hyper[14][3], hyper[12][3]);
-    gradientLine(projection[14][0], projection[14][1], projection[10][0], projection[10][1], vtxColors[14], vtxColors[10], hyper[14][3], hyper[10][3]);
-    gradientLine(projection[14][0], projection[14][1], projection[15][0], projection[15][1], vtxColors[14], vtxColors[15], hyper[14][3], hyper[15][3]);
-    gradientLine(projection[13][0], projection[13][1], projection[12][0], projection[12][1], vtxColors[13], vtxColors[12], hyper[13][3], hyper[12][3]);
-    gradientLine(projection[13][0], projection[13][1], projection[9][0], projection[9][1], vtxColors[13], vtxColors[9], hyper[13][3], hyper[9][3]);
-    gradientLine(projection[13][0], projection[13][1], projection[15][0], projection[15][1], vtxColors[13], vtxColors[15], hyper[13][3], hyper[15][3]);
+    gradientLine(hyper[0][0], hyper[0][1], hyper[0][2], hyper[1][0], hyper[1][1], hyper[1][2], vtxColors[0], vtxColors[1]);
+    gradientLine(hyper[0][0], hyper[0][1], hyper[0][2], hyper[2][0], hyper[2][1], hyper[2][2], vtxColors[0], vtxColors[2]);
+    gradientLine(hyper[0][0], hyper[0][1], hyper[0][2], hyper[4][0], hyper[4][1], hyper[4][2], vtxColors[0], vtxColors[4]);
+    gradientLine(hyper[0][0], hyper[0][1], hyper[0][2], hyper[8][0], hyper[8][1], hyper[8][2], vtxColors[0], vtxColors[8]);
+    gradientLine(hyper[1][0], hyper[1][1], hyper[1][2], hyper[9][0], hyper[9][1], hyper[9][2], vtxColors[1], vtxColors[9]);
+    gradientLine(hyper[2][0], hyper[2][1], hyper[2][2], hyper[10][0], hyper[10][1], hyper[10][2], vtxColors[2], vtxColors[10]);
+    gradientLine(hyper[3][0], hyper[3][1], hyper[3][2], hyper[1][0], hyper[1][1], hyper[1][2], vtxColors[3], vtxColors[1]);
+    gradientLine(hyper[3][0], hyper[3][1], hyper[3][2], hyper[2][0], hyper[2][1], hyper[2][2], vtxColors[3], vtxColors[2]);
+    gradientLine(hyper[3][0], hyper[3][1], hyper[3][2], hyper[7][0], hyper[7][1], hyper[7][2], vtxColors[3], vtxColors[7]);
+    gradientLine(hyper[3][0], hyper[3][1], hyper[3][2], hyper[11][0], hyper[11][1], hyper[11][2], vtxColors[3], vtxColors[11]);
+    gradientLine(hyper[4][0], hyper[4][1], hyper[4][2], hyper[12][0], hyper[12][1], hyper[12][2], vtxColors[4], vtxColors[12]);
+    gradientLine(hyper[6][0], hyper[6][1], hyper[6][2], hyper[4][0], hyper[4][1], hyper[4][2], vtxColors[6], vtxColors[4]);
+    gradientLine(hyper[6][0], hyper[6][1], hyper[6][2], hyper[2][0], hyper[2][1], hyper[2][2], vtxColors[6], vtxColors[2]);
+    gradientLine(hyper[6][0], hyper[6][1], hyper[6][2], hyper[7][0], hyper[7][1], hyper[7][2], vtxColors[6], vtxColors[7]);
+    gradientLine(hyper[6][0], hyper[6][1], hyper[6][2], hyper[14][0], hyper[14][1], hyper[14][2], vtxColors[6], vtxColors[14]);
+    gradientLine(hyper[5][0], hyper[5][1], hyper[5][2], hyper[4][0], hyper[4][1], hyper[4][2], vtxColors[5], vtxColors[4]);
+    gradientLine(hyper[5][0], hyper[5][1], hyper[5][2], hyper[1][0], hyper[1][1], hyper[1][2], vtxColors[5], vtxColors[1]);
+    gradientLine(hyper[5][0], hyper[5][1], hyper[5][2], hyper[7][0], hyper[7][1], hyper[7][2], vtxColors[5], vtxColors[7]);
+    gradientLine(hyper[5][0], hyper[5][1], hyper[5][2], hyper[13][0], hyper[13][1], hyper[13][2], vtxColors[5], vtxColors[13]);
+    gradientLine(hyper[7][0], hyper[7][1], hyper[7][2], hyper[15][0], hyper[15][1], hyper[15][2], vtxColors[7], vtxColors[15]);
+    gradientLine(hyper[8][0], hyper[8][1], hyper[8][2], hyper[9][0], hyper[9][1], hyper[9][2], vtxColors[8], vtxColors[9]);
+    gradientLine(hyper[8][0], hyper[8][1], hyper[8][2], hyper[10][0], hyper[10][1], hyper[10][2], vtxColors[8], vtxColors[10]);
+    gradientLine(hyper[8][0], hyper[8][1], hyper[8][2], hyper[12][0], hyper[12][1], hyper[12][2], vtxColors[8], vtxColors[12]);
+    gradientLine(hyper[11][0], hyper[11][1], hyper[11][2], hyper[9][0], hyper[9][1], hyper[9][2], vtxColors[11], vtxColors[9]);
+    gradientLine(hyper[11][0], hyper[11][1], hyper[11][2], hyper[10][0], hyper[10][1], hyper[10][2], vtxColors[11], vtxColors[10]);
+    gradientLine(hyper[11][0], hyper[11][1], hyper[11][2], hyper[15][0], hyper[15][1], hyper[15][2], vtxColors[11], vtxColors[15]);
+    gradientLine(hyper[14][0], hyper[14][1], hyper[14][2], hyper[12][0], hyper[12][1], hyper[12][2], vtxColors[14], vtxColors[12]);
+    gradientLine(hyper[14][0], hyper[14][1], hyper[14][2], hyper[10][0], hyper[10][1], hyper[10][2], vtxColors[14], vtxColors[10]);
+    gradientLine(hyper[14][0], hyper[14][1], hyper[14][2], hyper[15][0], hyper[15][1], hyper[15][2], vtxColors[14], vtxColors[15]);
+    gradientLine(hyper[13][0], hyper[13][1], hyper[13][2], hyper[12][0], hyper[12][1], hyper[12][2], vtxColors[13], vtxColors[12]);
+    gradientLine(hyper[13][0], hyper[13][1], hyper[13][2], hyper[9][0], hyper[9][1], hyper[9][2], vtxColors[13], vtxColors[9]);
+    gradientLine(hyper[13][0], hyper[13][1], hyper[13][2], hyper[15][0], hyper[15][1], hyper[15][2], vtxColors[13], vtxColors[15]);
 
     //rotate hypersurface to next step
     for(int point = 0; point <16; point++){
-        rotate(hyper[point], rotation);
+        rotate3D(hyper[point], rotation);
     }
     //increment fade variable;
     fade += 0.01;
     if(frameCount<=628){
-      saveFrame("./tmp/hyperv2-0_####.png");
+      //saveFrame("./tmp/hyperv3-0_####.png");
     }else if(frameCount>628){
       noLoop();
     }
+    
 }
