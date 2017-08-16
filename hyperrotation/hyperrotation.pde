@@ -85,7 +85,34 @@ void setup(){
     rotationW[3][0] = sin(delta);
     rotationW[3][3] = cos(delta);
 
-    //set-up 4D vertices
+    //set-up 4D vertices for hyper-tetrahedron (5 cell);
+    hyper[0][0] = w*0.7;
+    hyper[0][1] = w*0.7;
+    hyper[0][2] = w*0.7;
+    hyper[0][3] = w*(0.5 - 0.2*1.0/sqrt(5));
+    
+    hyper[1][0] = w*0.7;
+    hyper[1][1] = w*0.3;
+    hyper[1][2] = w*0.3;
+    hyper[1][3] = w*(0.5 - 0.2*1.0/sqrt(5));
+
+    hyper[2][0] = w*0.3;
+    hyper[2][1] = w*0.7;
+    hyper[2][2] = w*0.3;
+    hyper[2][3] = w*(0.5 - 0.2*1.0/sqrt(5));
+
+    hyper[3][0] = w*0.3;
+    hyper[3][1] = w*0.3;
+    hyper[3][2] = w*0.7;
+    hyper[3][3] = w*(0.5 - 0.2*1.0/sqrt(5));
+
+    hyper[4][0] = w*0.5;
+    hyper[4][1] = w*0.5;
+    hyper[4][2] = w*0.5;
+    hyper[4][3] = w*(0.5 + 0.2*(sqrt(5) - 1.0/sqrt(5)));
+
+    //set-up 4D vertices for hyper-cube
+    /*
     for(int i = 0; i<16; i++){
         if(isCube){
             hyper[i][0] = w*((0.3 + 0.4*(i%2)));
@@ -124,9 +151,10 @@ void setup(){
 
         }
     }
+    */
 
     //rotate vertices by the 4 rotation matrices X,Y,Z,W  
-    for(int point = 0; point < 16; point++){
+    for(int point = 0; point < 5; point++){
         rotate3D(hyper[point], rotationX);
         rotate3D(hyper[point], rotationY);
         rotate3D(hyper[point], rotationZ);
@@ -159,12 +187,12 @@ void setup(){
 }
 
 void projectAndUpdate(){
-    for(int i = 0; i<16; i++){
+    for(int i = 0; i<5; i++){
         projection[i][0] = hyper[i][1];
         projection[i][1] = hyper[i][2];
         //float dist = sqrt(hyper[i][0]*hyper[i][0] + hyper[i][3]*hyper[i][3]);
         float dist = hyper[i][3];
-        float alphaBright = map(dist, 0, 600, 0.0, 100.0);
+        float alphaBright = map(dist, 50, 550, 0.0, 100.0);
         if(alphaBright<1.0) alphaBright = 1.0;
         if(alphaBright>99.0) alphaBright = 99.0;
         float hue = map(dist, 50, 550, 125, 300);
@@ -176,7 +204,7 @@ void projectAndUpdate(){
           hue = 300.0;
           println(hue);
         }
-        vtxColors[i] = color(hue, 80, 65, 99);
+        vtxColors[i] = color(10+40*i, 80, alphaBright, alphaBright);
     }
 }
 
@@ -220,7 +248,7 @@ void gradientLine(float x1, float y1, float z1, float x2, float y2, float z2, co
         //float size = map(t, 0.0, 1.0, size1, size2);
         pushMatrix();
         translate(x1+t*deltaX, y1+t*deltaY, z1+t*deltaZ-300);
-        ellipse(0, 0, 10, 10);
+        ellipse(0, 0, 7, 7);
         popMatrix();
     }
 }
@@ -232,17 +260,25 @@ void draw(){
     projectAndUpdate();
     
     //fade out previous drawing
-    //float alphaVal = 30+20*cos(fade);
-    float alphaVal = 7.0;
+    float alphaVal = 40+39*cos(fade);
+    //float alphaVal = 7.0;
     fill(0.0, 0.0, 0.0, alphaVal);
     pushMatrix();
-    translate(0,0,460);
+    translate(0,0,450);
     hint(DISABLE_DEPTH_TEST);
     rect(0.0, 0.0, 600.0, 600.0);
-    hint(ENABLE_DEPTH_TEST);
+    //hint(ENABLE_DEPTH_TEST);
     popMatrix();
 
-    //draw gradient lines between vertices of projected hypersurface
+    //draw gradient lines between vertices of projected 5-cell
+    for(int i = 0; i < 5; i++){
+        for(int j = i; j < 5; j++){
+            gradientLine(hyper[i][0], hyper[i][1], hyper[i][2], hyper[j][0], hyper[j][1], hyper[j][2], vtxColors[i], vtxColors[j]);
+        }
+    }
+
+    //draw gradient lines between vertices of projected hypercube
+    /*
     gradientLine(hyper[0][0], hyper[0][1], hyper[0][2], hyper[1][0], hyper[1][1], hyper[1][2], vtxColors[0], vtxColors[1]);
     gradientLine(hyper[0][0], hyper[0][1], hyper[0][2], hyper[2][0], hyper[2][1], hyper[2][2], vtxColors[0], vtxColors[2]);
     gradientLine(hyper[0][0], hyper[0][1], hyper[0][2], hyper[4][0], hyper[4][1], hyper[4][2], vtxColors[0], vtxColors[4]);
@@ -275,15 +311,15 @@ void draw(){
     gradientLine(hyper[13][0], hyper[13][1], hyper[13][2], hyper[12][0], hyper[12][1], hyper[12][2], vtxColors[13], vtxColors[12]);
     gradientLine(hyper[13][0], hyper[13][1], hyper[13][2], hyper[9][0], hyper[9][1], hyper[9][2], vtxColors[13], vtxColors[9]);
     gradientLine(hyper[13][0], hyper[13][1], hyper[13][2], hyper[15][0], hyper[15][1], hyper[15][2], vtxColors[13], vtxColors[15]);
-
+    */
     //rotate hypersurface to next step
-    for(int point = 0; point <16; point++){
+    for(int point = 0; point <5; point++){
         rotate3D(hyper[point], rotation);
     }
     //increment fade variable;
     fade += 0.01;
     if(frameCount<=628){
-      //saveFrame("./tmp/hyperv3-0_####.png");
+      saveFrame("./tmp/hyperv4-0_####.png");
     }else if(frameCount>628){
       noLoop();
     }
