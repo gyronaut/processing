@@ -204,7 +204,7 @@ void projectAndUpdate(){
           hue = 300.0;
           println(hue);
         }
-        vtxColors[i] = color(10+40*i, 80, alphaBright, alphaBright);
+        vtxColors[i] = color(10+40*i, 80, 20 + 0.8*(alphaBright), alphaBright);
     }
 }
 
@@ -248,7 +248,7 @@ void gradientLine(float x1, float y1, float z1, float x2, float y2, float z2, co
         //float size = map(t, 0.0, 1.0, size1, size2);
         pushMatrix();
         translate(x1+t*deltaX, y1+t*deltaY, z1+t*deltaZ-300);
-        ellipse(0, 0, 7, 7);
+        ellipse(0, 0, 12, 12);
         popMatrix();
     }
 }
@@ -260,7 +260,7 @@ void draw(){
     projectAndUpdate();
     
     //fade out previous drawing
-    float alphaVal = 40+39*cos(fade);
+    float alphaVal = 12+11*cos(fade);
     //float alphaVal = 7.0;
     fill(0.0, 0.0, 0.0, alphaVal);
     pushMatrix();
@@ -319,7 +319,7 @@ void draw(){
     //increment fade variable;
     fade += 0.01;
     if(frameCount<=628){
-      saveFrame("./tmp/hyperv4-0_####.png");
+      saveFrame("./tmp/hyperv4-1_####.png");
     }else if(frameCount>628){
       noLoop();
     }
