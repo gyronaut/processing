@@ -88,7 +88,7 @@ void setup(){
     //set-up 4D vertices for eye
     hyper[0][0] = -6*(0.06)*w + 0.5*w;
     hyper[0][1] = 0*(0.06)*w + 0.5*w;
-    hyper[0][2] = 2*(0.06)*w + 0.5*w;
+    hyper[0][2] = 0.5*w;
     hyper[0][3] = 2*(0.06)*w + 0.5*w;
     
     hyper[1][0] = -2*(0.06)*w + 0.5*w;
@@ -103,7 +103,7 @@ void setup(){
 
     hyper[3][0] = 6*(0.06)*w + 0.5*w;
     hyper[3][1] = 0*(0.06)*w + 0.5*w;
-    hyper[3][2] = 2*(0.06)*w + 0.5*w;
+    hyper[3][2] = 0.5*w;
     hyper[3][3] = 2*(0.06)*w + 0.5*w;
 
     hyper[4][0] = 0*(0.06)*w + 0.5*w;
@@ -118,7 +118,7 @@ void setup(){
     
     hyper[6][0] = -2*(0.06)*w + 0.5*w;
     hyper[6][1] = (2.0)*(0.06)*w + 0.5*w;
-    hyper[6][2] = 2*(0.06)*w + 0.5*w;
+    hyper[6][2] = (4.0/3.0)*(0.06)*w + 0.5*w;
     hyper[6][3] = 2*(0.06)*w + 0.5*w;
 
     hyper[7][0] = 3*(0.06)*w + 0.5*w;
@@ -128,7 +128,7 @@ void setup(){
 
     hyper[8][0] = 2*(0.06)*w + 0.5*w;
     hyper[8][1] = (2.0)*(0.06)*w + 0.5*w;
-    hyper[8][2] = 2*(0.06)*w + 0.5*w;
+    hyper[8][2] = (4.0/3.0)*(0.06)*w + 0.5*w;
     hyper[8][3] = 2*(0.06)*w + 0.5*w;
 
     for(int i = 9; i<18; i++){
@@ -370,8 +370,10 @@ void draw(){
     }
     pushMatrix();
     translate(0.5*w, 0.5*w, 0.0);
-    fill(color(290, 80, 80, 100));
+    fill(color(290, 90, 90, 100));
     sphere(1.5*(0.06)*w);
+    fill(color(180, 90, 90, 15));
+    sphere(1.8*(0.06)*w);
     popMatrix();
     
     //draw gradient lines between vertices of projected 5-cell
