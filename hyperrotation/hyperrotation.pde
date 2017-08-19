@@ -282,18 +282,25 @@ void projectAndUpdate(){
         if(alphaBright>99.0) alphaBright = 99.0;
         float hue = 0.0;
         if(i < 18){
-          if((i%9)<5){
+          if((i%9)<4){
             hue = 180 + 30*(ceil(0.5*(i%9))%2);
           }else if((i%9)%2==0){
             hue = 210;
           }else{
-            hue = 300;
+            hue = 250;
           }
         }else{
           hue = 345 + (i%2)*10;
         }
-        if(hue > 360) println(hue);
-        vtxColors[i] = color(hue, 90, 100 - 0.8*(alphaBright),100 - alphaBright);
+
+        //if(i%18 > 8){
+        //  vtxColors[i] = color(hue, 90, 20.0 + 0.3*(alphaBright), alphaBright);
+        //}else{
+          vtxColors[i] = color(hue, 90, 19.0 + 0.8*(alphaBright), alphaBright);
+        //}
+        if(i==31){
+          System.out.format("frame %d, pt: %d, hue: %f, alphaBright: %f%n", frameCount, i, hue, alphaBright);
+        }
     }
 }
 
@@ -359,6 +366,8 @@ void draw(){
     hint(ENABLE_DEPTH_TEST);
     popMatrix();
 
+    pushMatrix();
+    //translate(0.0, 0.0, -150.0);
     //draw gradient lines for eye
     for(int i = 0; i < 5; i++){
       gradientLine(hyper[i][0], hyper[i][1], hyper[i][2], hyper[(i+1)%5][0], hyper[(i+1)%5][1], hyper[(i+1)%5][2], vtxColors[i], vtxColors[(i+1)%5]);
@@ -381,7 +390,7 @@ void draw(){
         gradientLine(hyper[i][0], hyper[i][1], hyper[i][2], hyper[i+18][0], hyper[i+18][1], hyper[i+18][2], vtxColors[i], vtxColors[i+18]);
       }
     }
-    pushMatrix();
+
     translate(0.5*w, 0.5*w, 0.0);
     fill(color(290, 90, 90, 100));
     sphere(1.5*(0.06)*w);
@@ -434,15 +443,16 @@ void draw(){
     gradientLine(hyper[13][0], hyper[13][1], hyper[13][2], hyper[15][0], hyper[15][1], hyper[15][2], vtxColors[13], vtxColors[15]);
     */
     //rotate hypersurface to next step
-    float th = (0.02/2.0)*(1-cos(2.0*PI*float(frameCount)/628.0))+0.005;
+    float th = (0.01399)*(1-cos(2.0*PI*float(frameCount)/628.0))+0.001;
     setRotation(th,th); 
     for(int point = 0; point <36; point++){
         rotate3D(hyper[point], rotation);
     }
     //increment fade variable;
     fade += 0.01;
+    //println(frameCount);
     if(frameCount<=1256){
-      saveFrame("./tmp/hyperv5-0_####.png");
+      //saveFrame("./tmp/hyperv5-1_####.png");
     }else if(frameCount>1256){
       noLoop();
     }
