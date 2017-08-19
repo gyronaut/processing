@@ -226,36 +226,49 @@ void setup(){
     */
 
     //set-up the 4D "infintessimal" rotation
-    rotation[0][0] = cos(theta1);
+    setRotation(theta1, theta2);
+}
+
+void setRotation(float th1, float th2){
+  //set-up the 4D "infintessimal" rotation
+    rotation[0][0] = cos(th1);
     rotation[0][1] = 0.0;
-    rotation[0][2] = -sin(theta1);
+    rotation[0][2] = -sin(th1);
     rotation[0][3] = 0.0;
     rotation[1][0] = 0.0;
-    rotation[1][1] = cos(theta2);
+    rotation[1][1] = cos(th2);
     rotation[1][2] = 0.0;
-    rotation[1][3] = -sin(theta2);
-    rotation[2][0] = sin(theta1);
+    rotation[1][3] = -sin(th2);
+    rotation[2][0] = sin(th1);
     rotation[2][1] = 0.0;
-    rotation[2][2] = cos(theta1);
+    rotation[2][2] = cos(th1);
     rotation[2][3] = 0.0;
     rotation[3][0] = 0.0;
-    rotation[3][1] = sin(theta2);
+    rotation[3][1] = sin(th2);
     rotation[3][2] = 0.0;
-    rotation[3][3] = cos(theta2);
+    rotation[3][3] = cos(th2);
 
     //rotate the axes of rotation by the rotationW matrix and rotationX&Y matrix
     rotation = matrixMult(rotationW, rotation);
     rotationW[0][3]*= -1.0;
     rotationW[3][0]*= -1.0;
     rotation = matrixMult(rotation, rotationW);
+    rotationW[0][3]*= -1.0;
+    rotationW[3][0]*= -1.0;
+    
     rotation = matrixMult(rotationY, rotation);
     rotationY[0][2]*=-1.0;
     rotationY[2][0]*=-1.0;
     rotation = matrixMult(rotation, rotationY);
+    rotationY[0][2]*=-1.0;
+    rotationY[2][0]*=-1.0;
+    
     rotation = matrixMult(rotationX, rotation);
     rotationX[1][2]*=-1.0;
     rotationX[2][1]*=-1.0;
     rotation = matrixMult(rotation, rotationX);
+    rotationX[1][2]*=-1.0;
+    rotationX[2][1]*=-1.0;
 }
 
 void projectAndUpdate(){
@@ -372,7 +385,7 @@ void draw(){
     translate(0.5*w, 0.5*w, 0.0);
     fill(color(290, 90, 90, 100));
     sphere(1.5*(0.06)*w);
-    fill(color(180, 90, 90, 15));
+    fill(color(180, 90, 90, 10));
     sphere(1.8*(0.06)*w);
     popMatrix();
     
@@ -421,13 +434,15 @@ void draw(){
     gradientLine(hyper[13][0], hyper[13][1], hyper[13][2], hyper[15][0], hyper[15][1], hyper[15][2], vtxColors[13], vtxColors[15]);
     */
     //rotate hypersurface to next step
+    float th = (0.02/2.0)*(1-cos(2.0*PI*float(frameCount)/628.0))+0.005;
+    setRotation(th,th); 
     for(int point = 0; point <36; point++){
         rotate3D(hyper[point], rotation);
     }
     //increment fade variable;
     fade += 0.01;
     if(frameCount<=1256){
-      //saveFrame("./tmp/hyperv4-1_####.png");
+      saveFrame("./tmp/hyperv5-0_####.png");
     }else if(frameCount>1256){
       noLoop();
     }
