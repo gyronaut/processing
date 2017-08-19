@@ -1,11 +1,11 @@
-float hyper[][] = new float[16][4];
+float hyper[][] = new float[36][4];
 float rotation[][] = new float[4][4];
-float projection[][] = new float[16][2];
+float projection[][] = new float[36][2];
 float rotationX[][] = new float[4][4];
 float rotationY[][] = new float[4][4];
 float rotationZ[][] = new float [4][4];
 float rotationW[][] = new float [4][4];
-color vtxColors[] = new color[16];
+color vtxColors[] = new color[36];
 
 float theta1 = 0.01;
 float theta2 = 0.01;
@@ -34,7 +34,7 @@ void setup(){
 
     //setup Colors
     for(int i = 0; i< 16; i++){
-        vtxColors[i] = color(170 + 5*i, 100 - (3.75*i), 99);
+        //vtxColors[i] = color(170 + 5*i, 100 - (3.75*i), 99);
     }
 
     //set-up rotation matrices:
@@ -85,7 +85,68 @@ void setup(){
     rotationW[3][0] = sin(delta);
     rotationW[3][3] = cos(delta);
 
+    //set-up 4D vertices for eye
+    hyper[0][0] = -6*(0.06)*w + 0.5*w;
+    hyper[0][1] = 0*(0.06)*w + 0.5*w;
+    hyper[0][2] = 2*(0.06)*w + 0.5*w;
+    hyper[0][3] = 2*(0.06)*w + 0.5*w;
+    
+    hyper[1][0] = -2*(0.06)*w + 0.5*w;
+    hyper[1][1] = -3*(0.06)*w + 0.5*w;
+    hyper[1][2] = 2*(0.06)*w + 0.5*w;
+    hyper[1][3] = 2*(0.06)*w + 0.5*w;
+
+    hyper[2][0] = 2*(0.06)*w + 0.5*w;
+    hyper[2][1] = -3*(0.06)*w + 0.5*w;
+    hyper[2][2] = 2*(0.06)*w + 0.5*w;
+    hyper[2][3] = 2*(0.06)*w + 0.5*w;
+
+    hyper[3][0] = 6*(0.06)*w + 0.5*w;
+    hyper[3][1] = 0*(0.06)*w + 0.5*w;
+    hyper[3][2] = 2*(0.06)*w + 0.5*w;
+    hyper[3][3] = 2*(0.06)*w + 0.5*w;
+
+    hyper[4][0] = 0*(0.06)*w + 0.5*w;
+    hyper[4][1] = 3*(0.06)*w + 0.5*w;
+    hyper[4][2] = 2*(0.06)*w + 0.5*w;
+    hyper[4][3] = 2*(0.06)*w + 0.5*w;
+    
+    hyper[5][0] = -3*(0.06)*w + 0.5*w;
+    hyper[5][1] = 0*(0.06)*w + 0.5*w;
+    hyper[5][2] = 2*(0.06)*w + 0.5*w;
+    hyper[5][3] = 2*(0.06)*w + 0.5*w;
+    
+    hyper[6][0] = -2*(0.06)*w + 0.5*w;
+    hyper[6][1] = (2.0)*(0.06)*w + 0.5*w;
+    hyper[6][2] = 2*(0.06)*w + 0.5*w;
+    hyper[6][3] = 2*(0.06)*w + 0.5*w;
+
+    hyper[7][0] = 3*(0.06)*w + 0.5*w;
+    hyper[7][1] = 0*(0.06)*w + 0.5*w;
+    hyper[7][2] = 2*(0.06)*w + 0.5*w;
+    hyper[7][3] = 2*(0.06)*w + 0.5*w;
+
+    hyper[8][0] = 2*(0.06)*w + 0.5*w;
+    hyper[8][1] = (2.0)*(0.06)*w + 0.5*w;
+    hyper[8][2] = 2*(0.06)*w + 0.5*w;
+    hyper[8][3] = 2*(0.06)*w + 0.5*w;
+
+    for(int i = 9; i<18; i++){
+      hyper[i][0] = hyper[i-9][0];
+      hyper[i][1] = hyper[i-9][1];
+      hyper[i][2] = -1*hyper[i-9][2] + w;
+      hyper[i][3] = hyper[i-9][3];
+    }
+    
+    for(int i = 18; i<36; i++){
+      hyper[i][0] = hyper[i-18][0];
+      hyper[i][1] = hyper[i-18][1];
+      hyper[i][2] = hyper[i-18][2];
+      hyper[i][3] = -1.0*hyper[i-18][3] + w;
+    }
+
     //set-up 4D vertices for hyper-tetrahedron (5 cell);
+    /*
     hyper[0][0] = w*0.7;
     hyper[0][1] = w*0.7;
     hyper[0][2] = w*0.7;
@@ -110,6 +171,7 @@ void setup(){
     hyper[4][1] = w*0.5;
     hyper[4][2] = w*0.5;
     hyper[4][3] = w*(0.5 + 0.2*(sqrt(5) - 1.0/sqrt(5)));
+    */
 
     //set-up 4D vertices for hyper-cube
     /*
@@ -153,13 +215,15 @@ void setup(){
     }
     */
 
-    //rotate vertices by the 4 rotation matrices X,Y,Z,W  
+    //rotate vertices by the 4 rotation matrices X,Y,Z,W
+    /*
     for(int point = 0; point < 5; point++){
-        rotate3D(hyper[point], rotationX);
-        rotate3D(hyper[point], rotationY);
-        rotate3D(hyper[point], rotationZ);
+        //rotate3D(hyper[point], rotationX);
+        //rotate3D(hyper[point], rotationY);
+        //rotate3D(hyper[point], rotationZ);
         //rotate(hyper[point], rotationW);
     }
+    */
 
     //set-up the 4D "infintessimal" rotation
     rotation[0][0] = cos(theta1);
@@ -179,15 +243,23 @@ void setup(){
     rotation[3][2] = 0.0;
     rotation[3][3] = cos(theta2);
 
-    //rotate the axes of rotation by the rotationW matrix?
+    //rotate the axes of rotation by the rotationW matrix and rotationX&Y matrix
     rotation = matrixMult(rotationW, rotation);
     rotationW[0][3]*= -1.0;
     rotationW[3][0]*= -1.0;
     rotation = matrixMult(rotation, rotationW);
+    rotation = matrixMult(rotationY, rotation);
+    rotationY[0][2]*=-1.0;
+    rotationY[2][0]*=-1.0;
+    rotation = matrixMult(rotation, rotationY);
+    rotation = matrixMult(rotationX, rotation);
+    rotationX[1][2]*=-1.0;
+    rotationX[2][1]*=-1.0;
+    rotation = matrixMult(rotation, rotationX);
 }
 
 void projectAndUpdate(){
-    for(int i = 0; i<5; i++){
+    for(int i = 0; i<36; i++){
         projection[i][0] = hyper[i][1];
         projection[i][1] = hyper[i][2];
         //float dist = sqrt(hyper[i][0]*hyper[i][0] + hyper[i][3]*hyper[i][3]);
@@ -195,16 +267,20 @@ void projectAndUpdate(){
         float alphaBright = map(dist, 50, 550, 0.0, 100.0);
         if(alphaBright<1.0) alphaBright = 1.0;
         if(alphaBright>99.0) alphaBright = 99.0;
-        float hue = map(dist, 50, 550, 125, 300);
-        if(hue < 125.0){
-          println(hue);
-          hue = 125.0;
+        float hue = 0.0;
+        if(i < 18){
+          if((i%9)<5){
+            hue = 180 + 30*(ceil(0.5*(i%9))%2);
+          }else if((i%9)%2==0){
+            hue = 210;
+          }else{
+            hue = 300;
+          }
+        }else{
+          hue = 345 + (i%2)*10;
         }
-        if(hue > 300){
-          hue = 300.0;
-          println(hue);
-        }
-        vtxColors[i] = color(10+40*i, 80, 20 + 0.8*(alphaBright), alphaBright);
+        if(hue > 360) println(hue);
+        vtxColors[i] = color(hue, 90, 100 - 0.8*(alphaBright),100 - alphaBright);
     }
 }
 
@@ -260,22 +336,52 @@ void draw(){
     projectAndUpdate();
     
     //fade out previous drawing
-    float alphaVal = 12+11*cos(fade);
+    float alphaVal = 12+11*cos(fade/2.0);
     //float alphaVal = 7.0;
     fill(0.0, 0.0, 0.0, alphaVal);
     pushMatrix();
     translate(0,0,450);
     hint(DISABLE_DEPTH_TEST);
     rect(0.0, 0.0, 600.0, 600.0);
-    //hint(ENABLE_DEPTH_TEST);
+    hint(ENABLE_DEPTH_TEST);
     popMatrix();
 
+    //draw gradient lines for eye
+    for(int i = 0; i < 5; i++){
+      gradientLine(hyper[i][0], hyper[i][1], hyper[i][2], hyper[(i+1)%5][0], hyper[(i+1)%5][1], hyper[(i+1)%5][2], vtxColors[i], vtxColors[(i+1)%5]);
+      gradientLine(hyper[i][0], hyper[i][1], hyper[i][2], hyper[i+9][0], hyper[i+9][1], hyper[i+9][2], vtxColors[i], vtxColors[i+9]);
+      gradientLine(hyper[i+9][0], hyper[i+9][1], hyper[i+9][2], hyper[(i+1)%5+9][0], hyper[(i+1)%5+9][1], hyper[(i+1)%5+9][2], vtxColors[i+9], vtxColors[(i+1)%5+9]);
+      gradientLine(hyper[i+18][0], hyper[i+18][1], hyper[i+18][2], hyper[(i+1)%5+18][0], hyper[(i+1)%5+18][1], hyper[(i+1)%5+18][2], vtxColors[i+18], vtxColors[(i+1)%5+18]);
+      gradientLine(hyper[i+18][0], hyper[i+18][1], hyper[i+18][2], hyper[i+27][0], hyper[i+27][1], hyper[i+27][2], vtxColors[i+18], vtxColors[i+27]);
+      gradientLine(hyper[i+27][0], hyper[i+27][1], hyper[i+27][2], hyper[(i+1)%5+27][0], hyper[(i+1)%5+27][1], hyper[(i+1)%5+27][2], vtxColors[i+27], vtxColors[(i+1)%5+27]);
+    }
+    for(int i = 0; i < 2; i++){
+      for(int j = 0; j < 2; j++){
+        gradientLine(hyper[1+j*18+i*9][0], hyper[1+j*18+i*9][1], hyper[1+j*18+i*9][2], hyper[5+j*18+i*9][0], hyper[5+j*18+i*9][1], hyper[5+j*18+i*9][2], vtxColors[1+j*18+i*9], vtxColors[5+j*18+i*9]);
+        gradientLine(hyper[5+j*18+i*9][0], hyper[5+j*18+i*9][1], hyper[5+j*18+i*9][2], hyper[6+j*18+i*9][0], hyper[6+j*18+i*9][1], hyper[6+j*18+i*9][2], vtxColors[5+j*18+i*9], vtxColors[6+j*18+i*9]);
+        gradientLine(hyper[2+j*18+i*9][0], hyper[2+j*18+i*9][1], hyper[2+j*18+i*9][2], hyper[7+j*18+i*9][0], hyper[7+j*18+i*9][1], hyper[7+j*18+i*9][2], vtxColors[2+j*18+i*9], vtxColors[7+j*18+i*9]);
+        gradientLine(hyper[7+j*18+i*9][0], hyper[7+j*18+i*9][1], hyper[7+j*18+i*9][2], hyper[8+j*18+i*9][0], hyper[8+j*18+i*9][1], hyper[8+j*18+i*9][2], vtxColors[7+j*18+i*9], vtxColors[8+j*18+i*9]);
+      }
+    }
+    for(int i = 0; i<18; i++){
+      if((i%9)!=5 && (i%9)!=7){
+        gradientLine(hyper[i][0], hyper[i][1], hyper[i][2], hyper[i+18][0], hyper[i+18][1], hyper[i+18][2], vtxColors[i], vtxColors[i+18]);
+      }
+    }
+    pushMatrix();
+    translate(0.5*w, 0.5*w, 0.0);
+    fill(color(290, 80, 80, 100));
+    sphere(1.5*(0.06)*w);
+    popMatrix();
+    
     //draw gradient lines between vertices of projected 5-cell
+    /*
     for(int i = 0; i < 5; i++){
         for(int j = i; j < 5; j++){
             gradientLine(hyper[i][0], hyper[i][1], hyper[i][2], hyper[j][0], hyper[j][1], hyper[j][2], vtxColors[i], vtxColors[j]);
         }
     }
+    */
 
     //draw gradient lines between vertices of projected hypercube
     /*
@@ -313,14 +419,14 @@ void draw(){
     gradientLine(hyper[13][0], hyper[13][1], hyper[13][2], hyper[15][0], hyper[15][1], hyper[15][2], vtxColors[13], vtxColors[15]);
     */
     //rotate hypersurface to next step
-    for(int point = 0; point <5; point++){
+    for(int point = 0; point <36; point++){
         rotate3D(hyper[point], rotation);
     }
     //increment fade variable;
     fade += 0.01;
-    if(frameCount<=628){
-      saveFrame("./tmp/hyperv4-1_####.png");
-    }else if(frameCount>628){
+    if(frameCount<=1256){
+      //saveFrame("./tmp/hyperv4-1_####.png");
+    }else if(frameCount>1256){
       noLoop();
     }
     
