@@ -89,7 +89,7 @@ void setup(){
     hyper[0][0] = -6*(0.06)*w + 0.5*w;
     hyper[0][1] = 0*(0.06)*w + 0.5*w;
     hyper[0][2] = 0.5*w;
-    hyper[0][3] = 2*(0.06)*w + 0.5*w;
+    hyper[0][3] = 0.5*w;
     
     hyper[1][0] = -2*(0.06)*w + 0.5*w;
     hyper[1][1] = -3*(0.06)*w + 0.5*w;
@@ -104,7 +104,7 @@ void setup(){
     hyper[3][0] = 6*(0.06)*w + 0.5*w;
     hyper[3][1] = 0*(0.06)*w + 0.5*w;
     hyper[3][2] = 0.5*w;
-    hyper[3][3] = 2*(0.06)*w + 0.5*w;
+    hyper[3][3] = 0.5*w;
 
     hyper[4][0] = 0*(0.06)*w + 0.5*w;
     hyper[4][1] = 3*(0.06)*w + 0.5*w;
@@ -299,7 +299,7 @@ void projectAndUpdate(){
           vtxColors[i] = color(hue, 90, 19.0 + 0.8*(alphaBright), alphaBright);
         //}
         if(i==31){
-          System.out.format("frame %d, pt: %d, hue: %f, alphaBright: %f%n", frameCount, i, hue, alphaBright);
+          //System.out.format("frame %d, pt: %d, hue: %f, alphaBright: %f%n", frameCount, i, hue, alphaBright);
         }
     }
 }
@@ -452,7 +452,7 @@ void draw(){
     fade += 0.01;
     //println(frameCount);
     if(frameCount<=1256){
-      //saveFrame("./tmp/hyperv5-1_####.png");
+      saveFrame("./tmp/hyperv5-2_####.png");
     }else if(frameCount>1256){
       noLoop();
     }
